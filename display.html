@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Screencast viewer</title>
+  </head>
+  <body style="background: linear-gradient(45deg, #7b0909, #6771b8b8)">
+    <video></video>
+    <!-- <img style="width: 90%; height: 90%; margin-top: 5%; margin-left: 5%" /> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.4/socket.io.js"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      window.onload = function () {
+        var room = prompt("Please enter room ID :");
+        if (room.trim().length == 0) {
+          document.write("<h1>Room ID is mandatory to join</h1>");
+        }
+
+        socket = io.connect("http://192.168.1.119:5000");
+        //after prompt is completed, add user to room
+        socket.emit("join-message", room);
+        //once the other user shares screen, this next event is fired and we receive
+        //frames from their computer screen and set them dynamically to this img src
+        socket.on("screen-data", (message) => {
+          const video = document.querySelector("video");
+          video.srcObject = stream;
+          video.onloadedmetadata = (e) => video.play();
+          // $("img").attr("src", message);
+        });
+      };
+    </script>
+  </body>
+</html>
